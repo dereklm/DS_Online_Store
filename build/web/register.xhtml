@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Amazon</title>
+    </h:head>
+    <style>
+
+    </style>
+    <h:body>
+        <b:navBar class="" brand="Amazon" brandHref="#">
+            <b:navbarLinks>
+                <b:navLink value="Home" href="/DS_Online_Store/faces/index.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks>
+                <b:navLink value="Search" href="/DS_Online_Store/faces/search.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks pull="right">
+                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks pull="right">
+                <b:navLink value="Logout" href="/DS_Online_Store/faces/admin.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks pull="right">
+                <b:dropMenu value="User Account">
+                    <b:navLink value="Profile" href="/DS_Online_Store/faces/profile.xhtml"></b:navLink>
+                    <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
+                </b:dropMenu>
+            </b:navbarLinks>
+        </b:navBar>
+        <div class="container">
+            <div class="row" style="margin-top:50px">
+                <div class="col-md-4 col-md-offset-4">
+                    <h:form id="register">
+                        <b:panel>
+                            Your Name: <br />
+                            <b:inputText id="name" value="#{register.name}"/>
+                            <b:message for="name" errorStyle="color: red" />
+                            Email Address: <br />
+                            <b:inputText id="email" value="#{register.email}" 
+                                         required="true"
+                                         size="40"
+                                         requiredMessage="Please enter your email address."
+                                         validatorMessage="Invalid email format.">
+                                <f:validateRegex
+                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                            </b:inputText>
+                            <b:message for="email" errorStyle="color: red" />
+                            Password: <br />
+                            <b:inputSecret placeholder="at least 8 characters" id="password" value="#{register.password}" />
+                            <b:message for="password" errorStyle="color: red" />
+                            Password Confirmation: <br />
+                            <b:inputSecret id="passwordConf" value="#{register.passwordConf}" />
+                            <b:message for="passwordConf" errorStyle="color: red" />
+                            Phone Number: <br />
+                            <b:inputText placeholder="ex. 0001112222" id="phone" value="#{register.phone}" />
+                            <b:message for="phone" errorStyle="color: red" />
+                            <h:commandButton style="width:100%" value="Register" action="#{register.registerCheck}"/>
+                            <br /><br />
+                            Already have an account? <h:link value="Sign in" outcome="login" />
+                        </b:panel>
+                    </h:form>
+
+                </div>
+            </div>
+        </div>
+    </h:body>
+</html>
+

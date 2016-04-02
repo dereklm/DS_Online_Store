@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Amazon</title>
+    </h:head>
+    <style>
+
+    </style>
+    <h:body>
+        <b:navBar class="" brand="Amazon" brandHref="#">
+            <b:navbarLinks>
+                <b:navLink value="Home" href="/DS_Online_Store/faces/index.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks>
+                <b:navLink value="Search" href="/DS_Online_Store/faces/search.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks pull="right">
+                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml"></b:navLink>
+            </b:navbarLinks>
+
+            <b:navbarLinks pull="right">
+                <b:navLink value="Logout" href="/DS_Online_Store/faces/admin.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks pull="right">
+                <b:dropMenu value="User Account">
+                    <b:navLink value="Profile" href="/DS_Online_Store/faces/profile.xhtml"></b:navLink>
+                    <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
+                </b:dropMenu>
+            </b:navbarLinks>
+        </b:navBar>
+        <div class="container">
+            <h2 style="text-align: center"> Thanks for signing up </h2>
+        </div>
+
+    </h:body>
+</html>

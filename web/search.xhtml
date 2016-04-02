@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Amazon</title>
+    </h:head>
+    <style>
+        .alignCenter{
+            align-content: center;
+        }
+    </style>
+    <h:body>
+        <b:navBar brand="Amazon" brandHref="#">
+            <b:navbarLinks>
+                <b:navLink value="Home" href="index.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks>
+                <b:navLink value="Search" href="search.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks pull="right">
+                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks pull="right" styleClass="hidden-xs">
+                <b:navLink value="Logout" href="admin.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks styleClass="display-xs hidden-sm hidden-md hidden-lg hidden-xl">
+                <b:navLink value="Logout" href="admin.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks pull="right">
+                <b:dropMenu value="Your Account">
+                    <b:navLink value="Profile" href="profile.xhtml"></b:navLink>
+                    <b:navLink value="Order History" href="purchaseHistory.xhtml"></b:navLink>
+                </b:dropMenu>
+            </b:navbarLinks>
+        </b:navBar>
+        <div class="container">
+            <h:form class="alignCenter">
+                <b:row > 
+                    <b:column col-xs="9" col-sm="10"> <b:inputText placeholder="Type something here..." /></b:column>
+                    <b:column col-xs="3" col-sm="2" span="2"> <b:commandButton value="Search" size="125px"/> </b:column>
+                </b:row>
+            </h:form>
+        </div>
+    </h:body>
+</html>
+
