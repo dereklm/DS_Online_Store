@@ -18,13 +18,19 @@
                 <b:navLink value="Search" href="/DS_Online_Store/faces/search.xhtml"></b:navLink>
             </b:navbarLinks>
             <b:navbarLinks pull="right">
-                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml"></b:navLink>
+                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml" 
+                           rendered="#{register.checkLoginStatus()}"/>
             </b:navbarLinks>
             <b:navbarLinks pull="right">
-                <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml"></b:navLink>
+                <b:navLink value="Logout" href="#{register.logout()}"
+                           rendered="#{register.checkLoginStatus()}" >
+                </b:navLink>
+                <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml" 
+                           rendered="#{!register.checkLoginStatus()}"/>
             </b:navbarLinks>
             <b:navbarLinks pull="right">
-                <b:dropMenu value="User Account">
+                <b:dropMenu value="Your Account"
+                            rendered="#{register.checkLoginStatus()}">
                     <b:navLink value="Profile" href="/DS_Online_Store/faces/profile.xhtml"></b:navLink>
                     <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
                 </b:dropMenu>

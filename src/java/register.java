@@ -1,18 +1,18 @@
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javax.annotation.Resource;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.sql.DataSource;
@@ -37,6 +37,8 @@ public class register implements Serializable {
     @NotNull
     @Size(min = 10, max = 10, message = "   Must be 10 digits.")
     private String phone;
+    
+    private User user;
 
     private Boolean checkError = false;
 
@@ -83,11 +85,64 @@ public class register implements Serializable {
         this.phone = phone;
     }
 
+    public boolean checkLoginStatus() throws SQLException {
+        boolean temp = false;
+        Principal up = FacesContext.getCurrentInstance().
+                getExternalContext().getUserPrincipal();
+        if (up == null) temp = false;
+        else temp = true;
+        
+        if (user == null && temp) {
+            user = new User();
+            if (ds == null) {
+                throw new SQLException("ds is null; Can't get data source");
+            }
+
+            Connection conn = ds.getConnection();
+
+            if (conn == null) {
+                throw new SQLException("conn is null; Can't get db connection");
+            }
+            
+            try {
+                PreparedStatement ps = conn.prepareStatement("select * from customer where "
+                        + "email = ?");
+                String em = FacesContext.getCurrentInstance().getExternalContext().
+                        getUserPrincipal().getName();
+                ps.setString(1, em);
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {                    
+                    user.setUsername(em);
+                    user.setPhone(rs.getString("phone"));
+                    user.setBilling(rs.getString("billingAddress"));
+                    user.setShipping(rs.getString("shippingAddress"));
+                    user.setRealName(rs.getString("realName"));
+                }
+            } finally {
+                conn.close();
+            }
+        }
+        
+        return temp;
+    }
+    
+    public String getUserLogin() {
+        return user.getRealName();
+    }
+    
+    public String logout() throws IOException {
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        ec.invalidateSession();
+        user = null;
+        return "/DS_Online_Store/faces/index.xhtml";
+    }
+    
     public String registerCheck() throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
         if (!(getPassword().equals(getPasswordConf()))) {
             FacesMessage lastMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
                     "   The password does not match", null);
             FacesContext.getCurrentInstance().addMessage("register:passwordConf", lastMsg);
+            passwordConf = "";
             checkError = true;
         }
 
@@ -144,13 +199,18 @@ public class register implements Serializable {
             }
         } finally {
             conn.close();
+        }        
+        if (!checkError) {
             name = "";
             email = "";
             password = "";
             passwordConf = "";
             phone = "";
-        }        
-        if (!checkError) return "welcome";
-        else return "register";
+            return "welcome";
+        }
+        else {
+            checkError = false;
+            return "register";
+        }
     }
 }
