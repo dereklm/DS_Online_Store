@@ -8,10 +8,20 @@
         <title>Amazon</title>
     </h:head>
     <style>
+        .myHeader{
+            text-align: center;
+            margin-top: 25px;
 
+        }
+        td { 
+            padding-left: 4000px;
+        }
     </style>
-    <h:body>
-        <b:navBar class="" brand="Amazon" brandHref="#">
+    <h:body> 
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{itemBean.getItems}"/>
+        </f:metadata>
+        <b:navBar brand="Amazon" brandHref="#">
             <b:navbarLinks>
                 <b:navLink value="Home" href="/DS_Online_Store/faces/index.xhtml"></b:navLink>
             </b:navbarLinks>
@@ -24,7 +34,7 @@
             </b:navbarLinks>
             <b:navbarLinks pull="right">
                 <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml" 
-                           rendered="#{!register.checkLoginStatus()}"/>
+                                   rendered="#{!register.checkLoginStatus()}"/>
             </b:navbarLinks>
             <b:navbarLinks pull="right">
                 <b:dropMenu value="Your Account"
@@ -36,9 +46,37 @@
                 </b:dropMenu>
             </b:navbarLinks>
         </b:navBar>
-        <h:form>
-            <h:commandButton value="Logout" action="#{register.logout()}" 
-                         rendered="#{register.checkLoginStatus()}"/>
-        </h:form>
+
+        <br /><br />
+        <div class="container">
+            <h:dataTable value="#{itemBean.list}" var="itemRetrieve" headerClass="myHeader"  styleClass="table table-striped">
+                <h:column>
+                    <f:facet name="header">Brand</f:facet>
+                    <h:outputText value="#{itemRetrieve.brand}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Model</f:facet>
+                    <h:outputText value="#{itemRetrieve.model}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Description</f:facet>
+                    <h:outputText value="#{itemRetrieve.description}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Stock</f:facet>
+                    <h:outputText value="#{itemRetrieve.stock}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Price ($)</f:facet>
+                    <h:outputText value="#{itemRetrieve.price}">
+                        <f:convertNumber currencyCode="USD" groupingUsed="true"
+                                         maxFractionDigits="2" type="currency" />
+                    </h:outputText>
+                </h:column>
+
+            </h:dataTable>
+        </div>
+
     </h:body>
 </html>
+

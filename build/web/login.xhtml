@@ -19,27 +19,26 @@
             </b:navbarLinks>
             <b:navbarLinks pull="right">
                 <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml" 
-                           rendered="#{register.checkLoginStatus()}"/>
+                           rendered="#{register.checkLoginStatus()}" />
             </b:navbarLinks>
-            <b:navbarLinks pull="right">
-                <b:navLink value="Logout" href="#{register.logout()}"
-                           rendered="#{register.checkLoginStatus()}" >
-                </b:navLink>
-                <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml" 
-                           rendered="#{!register.checkLoginStatus()}"/>
+            <b:navbarLinks pull="right"
+                           rendered="#{!register.checkLoginStatus()}">
+                <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml" />
             </b:navbarLinks>
             <b:navbarLinks pull="right">
                 <b:dropMenu value="Your Account"
                             rendered="#{register.checkLoginStatus()}">
                     <b:navLink value="Profile" href="/DS_Online_Store/faces/profile.xhtml"></b:navLink>
                     <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
+                    <b:navLink value="List Items" href="/DS_Online_Store/faces/itemList.xhtml"></b:navLink>
+                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/manageItems.xhtml"></b:navLink>
                 </b:dropMenu>
             </b:navbarLinks>
         </b:navBar>
         <div class="container">
             <div class="row" style="margin-top:50px">
                 <div class="col-md-4 col-md-offset-4">
-                    <form action="j_security_check">
+                    <form action="j_security_check" method="POST">
                         <b:panel >
                             Email Address: <br />
                             <input type="text" name="j_username" /> <br/>

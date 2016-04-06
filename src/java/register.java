@@ -15,6 +15,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -86,55 +87,58 @@ public class register implements Serializable {
     }
 
     public boolean checkLoginStatus() throws SQLException {
-        boolean temp = false;
-        Principal up = FacesContext.getCurrentInstance().
-                getExternalContext().getUserPrincipal();
-        if (up == null) temp = false;
-        else temp = true;
-        
-        if (user == null && temp) {
-            user = new User();
-            if (ds == null) {
-                throw new SQLException("ds is null; Can't get data source");
-            }
-
-            Connection conn = ds.getConnection();
-
-            if (conn == null) {
-                throw new SQLException("conn is null; Can't get db connection");
-            }
-            
-            try {
-                PreparedStatement ps = conn.prepareStatement("select * from customer where "
-                        + "email = ?");
-                String em = FacesContext.getCurrentInstance().getExternalContext().
-                        getUserPrincipal().getName();
-                ps.setString(1, em);
-                ResultSet rs = ps.executeQuery();
-                while (rs.next()) {                    
-                    user.setUsername(em);
-                    user.setPhone(rs.getString("phone"));
-                    user.setBilling(rs.getString("billingAddress"));
-                    user.setShipping(rs.getString("shippingAddress"));
-                    user.setRealName(rs.getString("realName"));
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context.getExternalContext().getUserPrincipal() == null) {
+            return false;
+        } else {
+            if (user != null) return true;
+            else {
+                user = new User();
+                if (ds == null) {
+                    throw new SQLException("ds is null; Can't get data source");
                 }
-            } finally {
-                conn.close();
-            }
-        }
-        
-        return temp;
+
+                Connection conn = ds.getConnection();
+
+                if (conn == null) {
+                    throw new SQLException("conn is null; Can't get db connection");
+                }
+
+                try {
+                    PreparedStatement ps = conn.prepareStatement("select * from customer where "
+                            + "email = ?");
+                    String em = FacesContext.getCurrentInstance().getExternalContext().
+                            getUserPrincipal().getName();
+                    ps.setString(1, em);
+                    ResultSet rs = ps.executeQuery();
+                    while (rs.next()) {                    
+                        user.setUsername(em);
+                        user.setPhone(rs.getString("phone"));
+                        user.setBilling(rs.getString("billingAddress"));
+                        user.setShipping(rs.getString("shippingAddress"));
+                        user.setRealName(rs.getString("realName"));
+                    }
+                } finally {
+                    conn.close();
+                }                
+                return true;
+            }            
+        }    
+    }
+    
+    public User getUser() {
+        return user;
     }
     
     public String getUserLogin() {
         return user.getRealName();
     }
     
-    public String logout() throws IOException {
+    public void logout() throws IOException {
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         ec.invalidateSession();
         user = null;
-        return "/DS_Online_Store/faces/index.xhtml";
+        ec.redirect(ec.getRequestContextPath()+ "/faces/index.xhtml");
     }
     
     public String registerCheck() throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -212,5 +216,75 @@ public class register implements Serializable {
             checkError = false;
             return "register";
         }
+    }
+    
+    public void updateInfo() throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
+        boolean pw = true;
+        if (user.getPassword().equals("")) pw = false;
+        
+        if (user.getPassword() != null && !(user.getPassword().equals(user.getPasswordConf()))) {
+            FacesMessage lastMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "   The password does not match", null);
+            FacesContext.getCurrentInstance().addMessage("profile:passwordConf", lastMsg);
+            passwordConf = "";
+            checkError = true;
+        }
+        
+        if (!(user.getPhone().matches("[0-9]+"))) {
+            FacesMessage lastMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "   Phone # Must include only digits", null);
+            FacesContext.getCurrentInstance().addMessage("profile:phone", lastMsg);
+            checkError = true;
+        } 
+        
+        if (ds == null) {
+            throw new SQLException("ds is null; Can't get data source");
+        }
+
+        Connection conn = ds.getConnection();
+
+        if (conn == null) {
+            throw new SQLException("conn is null; Can't get db connection");
+        }
+        
+        try {
+            if (!checkError) {
+                if (pw) {
+                    PreparedStatement ps = conn.prepareStatement("Update "
+                            + "customer set password=?, realName=?"
+                            + ", phone=?, billingAddress=?, shippingAddress=?"
+                            + " where email=?");
+                    MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                    byte[] hash = digest.digest(user.getPassword().getBytes("UTF-8"));
+                    String pwString = DatatypeConverter.printHexBinary(hash);
+                    ps.setString(1, pwString);
+                    ps.setString(2, user.getRealName());
+                    ps.setString(3, user.getPhone());
+                    ps.setString(4, user.getBilling());
+                    ps.setString(5, user.getShipping());
+                    ps.setString(6, user.getUsername());
+                    
+                    ps.executeUpdate();
+                } else {
+                    PreparedStatement ps = conn.prepareStatement("Update "
+                            + "Customer set realName=?"
+                            + ", phone=?, billingAddress=?, shippingAddress=?"
+                            + " where email=?");
+                    ps.setString(1, user.getRealName());
+                    ps.setString(2, user.getPhone());
+                    ps.setString(3, user.getBilling());
+                    ps.setString(4, user.getShipping());
+                    ps.setString(5, user.getUsername());
+                    
+                    ps.executeUpdate();
+                }
+            }            
+        } finally {
+            conn.close();
+            checkError = false;
+            FacesMessage lastMsg = new FacesMessage(FacesMessage.SEVERITY_INFO,
+                "   Update Successful", null);
+            FacesContext.getCurrentInstance().addMessage("profile:button", lastMsg);
+        }  
     }
 }

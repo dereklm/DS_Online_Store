@@ -22,9 +22,6 @@
                            rendered="#{register.checkLoginStatus()}"/>
             </b:navbarLinks>
             <b:navbarLinks pull="right">
-                <b:navLink value="Logout" href="#{register.logout()}"
-                           rendered="#{register.checkLoginStatus()}" >
-                </b:navLink>
                 <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml" 
                            rendered="#{!register.checkLoginStatus()}"/>
             </b:navbarLinks>
@@ -33,10 +30,49 @@
                             rendered="#{register.checkLoginStatus()}">
                     <b:navLink value="Profile" href="/DS_Online_Store/faces/profile.xhtml"></b:navLink>
                     <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
+                    <b:navLink value="List Items" href="/DS_Online_Store/faces/itemList.xhtml"></b:navLink>
+                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/manageItems.xhtml"></b:navLink>
                 </b:dropMenu>
             </b:navbarLinks>
         </b:navBar>
-        
+        <center>
+        <h2 >Edit Profile Information</h2>
+        <div class="container">
+            <div class="row" style="margin-top:50px">
+                <div class="col-md-4 col-md-offset-4">
+                <h:form id="profile">
+                    <b:panel>
+                        Your Name: <br />
+                        <b:inputText id="name" value="#{register.user.realName}"/>
+                        <b:message for="name" errorStyle="color: red" />                    
+                        Password: <br />
+                        <b:inputSecret placeholder="at least 8 characters" id="password" value="#{register.user.password}" />
+                        <b:message for="password" errorStyle="color: red" />
+                        Password Confirmation: <br />
+                        <b:inputSecret id="passwordConf" value="#{register.user.passwordConf}" />
+                        <b:message for="passwordConf" errorStyle="color: red" />
+                        Phone Number: <br />
+                        <b:inputText placeholder="ex. 0001112222" id="phone" value="#{register.user.phone}" />
+                        <b:message for="phone" errorStyle="color: red" />
+                        Billing Address: <br />
+                        <b:inputText placeholder="ex. 100 N. University Dr." value="#{register.user.billing}" />
+                        Shipping Address: <br />
+                        <b:inputText placeholder="ex. 100 N. University Dr." value="#{register.user.shipping}" />
+                        <h:commandButton style="width:100%" id="button" value="Update" action="#{register.updateInfo()}"/>
+                        <b:message for="button" infoStyle="color: green" />
+                        <br />
+                    </b:panel> 
+                </h:form>
+                </div>
+            </div>
+        </div>
+
+        <h:form>
+            <h:commandButton value="Logout" action="#{register.logout()}" 
+                         rendered="#{register.checkLoginStatus()}"/>
+        </h:form>
+            
+        </center>
     </h:body>
 </html>
 
