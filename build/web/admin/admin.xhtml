@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:b="http://bootsfaces.net/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>Amazon</title>
     </h:head>
@@ -21,17 +22,73 @@
                 <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml"></b:navLink>
             </b:navbarLinks>
             <b:navbarLinks pull="right">
-                <b:navLink value="Logout" href="/DS_Online_Store/faces/admin.xhtml"></b:navLink>
-            </b:navbarLinks>
-            <b:navbarLinks pull="right">
                 <b:dropMenu value="User Account">
+                    <b:navLink value="Admin" href="/DS_Online_Store/faces/admin/admin.xhtml"
+                               rendered="#{facesContext.externalContext.isUserInRole('admin')}"/>
                     <b:navLink value="Profile" href="/DS_Online_Store/faces/profile.xhtml"></b:navLink>
                     <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
+                    <b:navLink value="List Items" href="/DS_Online_Store/faces/itemList.xhtml"
+                               rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
+                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/manageItems.xhtml"
+                               rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
                 </b:dropMenu>
             </b:navbarLinks>
         </b:navBar>
-        home
-        <h:link value="Logout" outcome="index"></h:link>
+        <center>
+            <h:form>
+            <p:dataTable id="table" style="width:75%" 
+                         var="user" value="#{adminBean.users}" >    
+                <f:facet name="header" >
+                    User List
+                </f:facet>
+
+                <p:column headerText="Email">
+                    <h:outputText value="#{user.username}" />
+                </p:column>
+                <p:column headerText="Name">
+                    <h:outputText value="#{user.realName}" />
+                </p:column>
+                <p:column headerText="Phone">
+                    <h:outputText value="#{user.phone}" />
+                </p:column>
+                <p:column headerText="Shipping Address">
+                    <h:outputText value="#{user.shipping}" />
+                </p:column>
+                <p:column headerText="Billing Address">
+                    <h:outputText value="#{user.billing}" />
+                </p:column>
+                <p:column headerText="Delete?">   
+                    <p:commandButton
+                        value="Delete" 
+                        action="#{adminBean.deleteUser(user.username)}">
+                        
+                        <p:confirm icon="ui-icon-alert"
+                                   message="Really Delete User?">
+                            
+                        </p:confirm>
+                        
+                        <p:confirmDialog global="true" showEffect="fade" 
+                                         widgetVar="confirmDelete"
+                                         visible="false"
+                                        hideEffect="fade">
+                           <p:commandButton
+                                            value="Yes" type="button" 
+                                            styleClass="ui-confirmdialog-yes"
+                                            icon="ui-icon-check" />
+                           <p:commandButton value="No" type="button"
+                                            styleClass="ui-confirmdialog-no"
+                                            icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </p:commandButton>                        
+                </p:column>
+            </p:dataTable>             
+            </h:form>   
+            <h:form>
+                <h:commandLink   value="Logout" 
+                                 action="#{register.logout()}" 
+                                 rendered="#{register.checkLoginStatus()}" />
+            </h:form>
+        </center>
     </h:body>
 </html>
 

@@ -141,6 +141,35 @@ public class register implements Serializable {
         ec.redirect(ec.getRequestContextPath()+ "/faces/index.xhtml");
     }
     
+    public void delete(String username) throws SQLException, IOException {
+        if (ds == null) {
+            throw new SQLException("ds is null; Can't get data source");
+        }
+
+        Connection conn = ds.getConnection();
+
+        if (conn == null) {
+            throw new SQLException("conn is null; Can't get db connection");
+        }
+        
+        try {
+            PreparedStatement ps = conn.prepareStatement(""
+                    + "delete from customer where email = ?");
+            ps.setString(1, username);
+           
+            ps.executeUpdate();
+            
+            ps = conn.prepareStatement(""
+                    + "delete from user_groups where username = ?");
+            ps.setString(1, username);
+            
+            ps.executeUpdate();
+        } finally {
+            conn.close();
+        }
+        logout();
+    }
+    
     public String registerCheck() throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
         if (!(getPassword().equals(getPasswordConf()))) {
             FacesMessage lastMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR,

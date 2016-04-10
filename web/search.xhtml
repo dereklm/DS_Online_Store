@@ -31,10 +31,14 @@
             <b:navbarLinks pull="right">
                 <b:dropMenu value="Your Account"
                             rendered="#{register.checkLoginStatus()}">
+                    <b:navLink value="Admin" href="/DS_Online_Store/faces/admin/admin.xhtml"
+                               rendered="#{facesContext.externalContext.isUserInRole('admin')}"/>
                     <b:navLink value="Profile" href="profile.xhtml"></b:navLink>
-                    <b:navLink value="Order History" href="purchaseHistory.xhtml"></b:navLink>
-                    <b:navLink value="List Items" href="/DS_Online_Store/faces/itemList.xhtml"></b:navLink>
-                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/manageItems.xhtml"></b:navLink>
+                    <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
+                    <b:navLink value="List Items" href="/DS_Online_Store/faces/itemList.xhtml"
+                               rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
+                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/manageItems.xhtml"
+                               rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
                 </b:dropMenu>
             </b:navbarLinks>
         </b:navBar>
@@ -47,7 +51,7 @@
             </h:form>
         </div>
         <h:form>
-            <h:commandButton value="Logout" action="#{register.logout()}" 
+            <h:commandLink value="Logout" action="#{register.logout()}" 
                          rendered="#{register.checkLoginStatus()}"/>
         </h:form>
     </h:body>
