@@ -36,7 +36,6 @@ public class register implements Serializable {
     private String password;
     private String passwordConf;
     @NotNull
-    @Size(min = 10, max = 10, message = "   Must be 10 digits.")
     private String phone;
     
     private User user;
@@ -179,13 +178,6 @@ public class register implements Serializable {
             checkError = true;
         }
 
-        if (!(getPhone().matches("[0-9]+"))) {
-            FacesMessage lastMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "   Phone # Must include only digits", null);
-            FacesContext.getCurrentInstance().addMessage("register:phone", lastMsg);
-            checkError = true;
-        }        
-        
         if (ds == null) {
             throw new SQLException("ds is null; Can't get data source");
         }
@@ -234,11 +226,8 @@ public class register implements Serializable {
             conn.close();
         }        
         if (!checkError) {
-            name = "";
-            email = "";
-            password = "";
+             password = "";
             passwordConf = "";
-            phone = "";
             return "welcome";
         }
         else {

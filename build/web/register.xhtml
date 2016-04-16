@@ -12,7 +12,7 @@
 
     </style>
     <h:body>
-        <b:navBar class="" brand="Amazon" brandHref="#">
+        <b:navBar brand="Amazon" brandHref="#">
             <b:navbarLinks>
                 <b:navLink value="Home" href="/DS_Online_Store/faces/index.xhtml"></b:navLink>
             </b:navbarLinks>
@@ -20,22 +20,23 @@
                 <b:navLink value="Search" href="/DS_Online_Store/faces/search.xhtml"></b:navLink>
             </b:navbarLinks>
             <b:navbarLinks pull="right">
-                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml" 
+                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml"
                            rendered="#{register.checkLoginStatus()}"/>
             </b:navbarLinks>
-            <b:navbarLinks pull="right">
-                <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml" 
-                           rendered="#{!register.checkLoginStatus()}"/>
+            <b:navbarLinks pull="right"
+                           rendered="#{!register.checkLoginStatus()}">
+                <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml" />
             </b:navbarLinks>
             <b:navbarLinks pull="right">
-                <b:dropMenu value="Your Account">
+                <b:dropMenu value="Your Account"
+                            rendered="#{register.checkLoginStatus()}">
                     <b:navLink value="Admin" href="/DS_Online_Store/faces/admin/admin.xhtml"
                                rendered="#{facesContext.externalContext.isUserInRole('admin')}"/>
                     <b:navLink value="Profile" href="/DS_Online_Store/faces/profile.xhtml"></b:navLink>
                     <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
-                    <b:navLink value="List Items" href="/DS_Online_Store/faces/itemList.xhtml"
+                    <b:navLink value="List Items" href="/DS_Online_Store/faces/admin/itemList.xhtml"
                                rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
-                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/manageItems.xhtml"
+                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/admin/manageItems.xhtml"
                                rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
                 </b:dropMenu>
             </b:navbarLinks>
@@ -46,29 +47,31 @@
                     <h:form id="register">
                         <b:panel>
                             Your Name: <br />
-                            <b:inputText id="name" value="#{register.name}"/>
-                            <b:message for="name" errorStyle="color: red" />
-                            Email Address: <br />
-                            <b:inputText id="email" value="#{register.email}" 
+                            <p:inputText id="name" value="#{register.name}" class="ui-grid-col-12"/>
+                            <p:message for="name"/>
+                            <br /><br />Email Address: <br />
+                            <p:inputText id="email" value="#{register.email}" 
                                          required="true"
-                                         size="40"
+                                         class="ui-grid-col-12"
                                          requiredMessage="Please enter your email address."
                                          validatorMessage="Invalid email format.">
                                 <f:validateRegex
                                     pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
-                            </b:inputText>
-                            <b:message for="email" errorStyle="color: red" />
-                            Password: <br />
-                            <b:inputSecret placeholder="at least 8 characters" id="password" value="#{register.password}" />
-                            <b:message for="password" errorStyle="color: red" />
-                            Password Confirmation: <br />
-                            <b:inputSecret id="passwordConf" value="#{register.passwordConf}" />
-                            <b:message for="passwordConf" errorStyle="color: red" />
-                            Phone Number: <br />
-                            <b:inputText placeholder="ex. 0001112222" id="phone" value="#{register.phone}" />
-                            <b:message for="phone" errorStyle="color: red" />
-                            <p:commandButton style="width:100%" value="Register" action="#{register.registerCheck}"/>
+                            </p:inputText>
+                            <p:message for="email" class="ui-grid-col-12"/>
+                            <br /><br />Password: <br />
+                            <p:password placeholder="at least 8 characters" id="password" value="#{register.password}" class="ui-grid-col-12" />
+                            <p:message for="password"  class="ui-grid-col-12"/>
+                            <br /><br />Password Confirmation: <br />
+                            <p:password id="passwordConf" value="#{register.passwordConf}" class="ui-grid-col-12"/>
+                            <p:message for="passwordConf"/>
                             <br /><br />
+                            Phone Number: <br />
+                            <p:inputMask id="phone" value="#{register.phone}" mask="999-999-9999" class="ui-grid-col-12"/>
+                            <p:message for="phone"/>
+                            <br /><br /><br />
+                            <p:commandButton style="width:100%" value="Register" action="#{register.registerCheck}" update="register"/>
+                            <br /><br /><br /><br /><br />
                             Already have an account? <h:link value="Sign in" outcome="login" />
                         </b:panel>
                     </h:form>

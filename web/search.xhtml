@@ -15,29 +15,29 @@
     <h:body>
         <b:navBar brand="Amazon" brandHref="#">
             <b:navbarLinks>
-                <b:navLink value="Home" href="index.xhtml"></b:navLink>
+                <b:navLink value="Home" href="/DS_Online_Store/faces/index.xhtml"></b:navLink>
             </b:navbarLinks>
             <b:navbarLinks>
-                <b:navLink value="Search" href="search.xhtml"></b:navLink>
+                <b:navLink value="Search" href="/DS_Online_Store/faces/search.xhtml"></b:navLink>
             </b:navbarLinks>
             <b:navbarLinks pull="right">
-                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml" 
+                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml"
                            rendered="#{register.checkLoginStatus()}"/>
             </b:navbarLinks>
-            <b:navbarLinks pull="right">
-                <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml" 
-                           rendered="#{!register.checkLoginStatus()}"/>
+            <b:navbarLinks pull="right"
+                           rendered="#{!register.checkLoginStatus()}">
+                <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml" />
             </b:navbarLinks>
             <b:navbarLinks pull="right">
                 <b:dropMenu value="Your Account"
                             rendered="#{register.checkLoginStatus()}">
                     <b:navLink value="Admin" href="/DS_Online_Store/faces/admin/admin.xhtml"
                                rendered="#{facesContext.externalContext.isUserInRole('admin')}"/>
-                    <b:navLink value="Profile" href="profile.xhtml"></b:navLink>
+                    <b:navLink value="Profile" href="/DS_Online_Store/faces/profile.xhtml"></b:navLink>
                     <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
-                    <b:navLink value="List Items" href="/DS_Online_Store/faces/itemList.xhtml"
+                    <b:navLink value="List Items" href="/DS_Online_Store/faces/admin/itemList.xhtml"
                                rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
-                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/manageItems.xhtml"
+                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/admin/manageItems.xhtml"
                                rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
                 </b:dropMenu>
             </b:navbarLinks>

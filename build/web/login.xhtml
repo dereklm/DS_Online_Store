@@ -19,8 +19,8 @@
                 <b:navLink value="Search" href="/DS_Online_Store/faces/search.xhtml"></b:navLink>
             </b:navbarLinks>
             <b:navbarLinks pull="right">
-                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml" 
-                           rendered="#{register.checkLoginStatus()}" />
+                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml"
+                           rendered="#{register.checkLoginStatus()}"/>
             </b:navbarLinks>
             <b:navbarLinks pull="right"
                            rendered="#{!register.checkLoginStatus()}">
@@ -33,9 +33,9 @@
                                rendered="#{facesContext.externalContext.isUserInRole('admin')}"/>
                     <b:navLink value="Profile" href="/DS_Online_Store/faces/profile.xhtml"></b:navLink>
                     <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
-                    <b:navLink value="List Items" href="/DS_Online_Store/faces/itemList.xhtml"
+                    <b:navLink value="List Items" href="/DS_Online_Store/faces/admin/itemList.xhtml"
                                rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
-                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/manageItems.xhtml"
+                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/admin/manageItems.xhtml"
                                rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
                 </b:dropMenu>
             </b:navbarLinks>
@@ -43,17 +43,20 @@
         <div class="container">
             <div class="row" style="margin-top:50px">
                 <div class="col-md-4 col-md-offset-4">
-                    <form action="j_security_check" method="POST">
-                        <b:panel >
+                    <b:panel>
+                        <form action="j_security_check" method="POST">
                             Email Address: <br />
-                            <input style="width:100%; text-align: center" type="text" name="j_username" /> <br/>
+                            <input class="col-md-12" style="text-align: center" type="text" name="j_username" /> <br/>
                             Password: <br />
                             <input style="width:100%; text-align: center" type="password" name="j_password" /> <br/> <br/>
-                            <h:commandButton style="width:100%" value="Login" /> <br />
-                        </b:panel>
-                    </form>                    
+                            <h:commandButton style="width:100%" value="Sign in" /> <br />
+                        </form>                    
+                        <br /><br />
+
+                    </b:panel>
+                    <div class="col-md-3" style="vertical-align:top"><hr /></div><div class="col-md-6" style="text-align:center">New to Amazon?</div><div class="col-md-3"><hr /></div>
                     <h:form>
-                        <br /><br /><b:commandButton style="width:100%" value="Register" action="register"/>
+                        <br /><br /><p:commandButton style="width:100%" value="Create you Amazon account" action="register"/>
                     </h:form>
                 </div>
             </div>

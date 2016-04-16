@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Amazon</title>
+    </h:head>
+    <style>
+        textarea {
+            resize: vertical;
+        }
+    </style>
+    <h:body>
+        <f:metadata>
+            <f:viewParam name="item" value="#{item}" />
+        </f:metadata>
+        <b:navBar brand="Amazon" brandHref="#">
+            <b:navbarLinks>
+                <b:navLink value="Home" href="/DS_Online_Store/faces/index.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks>
+                <b:navLink value="Search" href="/DS_Online_Store/faces/search.xhtml"></b:navLink>
+            </b:navbarLinks>
+            <b:navbarLinks pull="right">
+                <b:navLink value="Cart" href="/DS_Online_Store/faces/cart.xhtml"
+                           rendered="#{register.checkLoginStatus()}"/>
+            </b:navbarLinks>
+            <b:navbarLinks pull="right"
+                           rendered="#{!register.checkLoginStatus()}">
+                <b:navLink value="Login" href="/DS_Online_Store/faces/login.xhtml" />
+            </b:navbarLinks>
+            <b:navbarLinks pull="right">
+                <b:dropMenu value="Your Account"
+                            rendered="#{register.checkLoginStatus()}">
+                    <b:navLink value="Admin" href="/DS_Online_Store/faces/admin/admin.xhtml"
+                               rendered="#{facesContext.externalContext.isUserInRole('admin')}"/>
+                    <b:navLink value="Profile" href="/DS_Online_Store/faces/profile.xhtml"></b:navLink>
+                    <b:navLink value="Order History" href="/DS_Online_Store/faces/purchaseHistory.xhtml"></b:navLink>
+                    <b:navLink value="List Items" href="/DS_Online_Store/faces/admin/itemList.xhtml"
+                               rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
+                    <b:navLink value="Manage Items" href="/DS_Online_Store/faces/admin/manageItems.xhtml"
+                               rendered="#{facesContext.externalContext.isUserInRole('admin')}"></b:navLink>
+                </b:dropMenu>
+            </b:navbarLinks>
+        </b:navBar>
+
+        <div class="container">
+            <div class="col-md-10 col-md-offset-1" style="margin-top:50px">
+                <div class="col-md-10">
+                    <b:panel>
+                        <h:form id="updateItem" style="text-align:left">
+                            Title: <br />
+                            <p:inputText class="ui-grid-col-12" id="title" value="#{itemBean.item.title}" />
+                            <b:message for="title" errorStyle="color: red" />
+                            Model Number: <br />
+                            <p:inputText  class="ui-grid-col-12" id="model" value="#{itemBean.item.model}" 
+                                          required="true"
+                                          size="40"
+                                          requiredMessage="Enter the model number."
+                                          validatorMessage="Invalid model format.">
+                            </p:inputText>
+                            <b:message for="model" errorStyle="color: red" />
+                            Brand: <br />
+                            <p:inputText  class="ui-grid-col-12" id="brand" value="#{itemBean.item.brand}" />
+                            <b:message for="brand" errorStyle="color: red" />
+                            Stock: <br />
+                            <p:inputText  class="ui-grid-col-12" id="stock" value="#{itemBean.item.stock}" />
+                            <b:message for="stock" errorStyle="color: red" />
+                            Price ($): <br/>
+                            <p:inputText  class="ui-grid-col-12" id="price" value="#{itemBean.item.price}" />
+                            <b:message for="price" errorStyle="color: red" />
+                            Description: <br/>
+                            <p:inputTextarea  class="ui-grid-col-12" id="description" autoResize="false" value="#{itemBean.item.description}" />
+                            <b:message for="description" errorStyle="color: red" />
+                            <br /><br /><br /><br /><br />
+                            <p:commandButton style="width:100%" value="Confirm" action="#{itemBean.updateItem(itemBean.item.ITEM_ID)}"/>
+                        </h:form>
+                        <br /><br />
+                        <h:form id="uploadForm" enctype="multipart/form-data">
+                            <p:growl id="messages" showDetail="true" />
+                            <p:fileUpload value="#{manageItem.file}" mode="simple" skinSimple="true" /><br />
+                            <p:commandButton id="uplode" value="Upload File" ajax="false" action="#{manageItem.uploadFile}" />
+                        </h:form>
+                    </b:panel>
+                </div>
+                <div class="col-md-2">
+                    <b:panel>
+                        <h:dataTable value="#{manageItem.list}" var="file">
+                            <h:column>
+                                <image src="ImageServlet?fileid=#{file.FILE_ID}"
+                                       height="100" width="100" />
+                            </h:column>
+                        </h:dataTable>
+                    </b:panel>
+                </div>
+            </div>
+        </div>
+
+
+    </h:body>
+</html>
