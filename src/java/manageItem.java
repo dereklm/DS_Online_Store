@@ -1,5 +1,4 @@
 
-import com.sun.rowset.CachedRowSetImpl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -7,10 +6,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.List;
 import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -26,7 +24,7 @@ import org.primefaces.model.UploadedFile;
 @Named
 @RequestScoped
 public class manageItem implements Serializable {
- 
+
     @Resource(name = "jdbc/db1")
     private DataSource ds;
 
@@ -44,15 +42,15 @@ public class manageItem implements Serializable {
     private String description;
     @NotNull
     private double price;
-    
+
     private UploadedFile file;
 
     private Boolean checkError = false;
 
     private String ITEM_ID;
 
+    private List <String> images;
     
-
     public UploadedFile getFile() {
         return file;
     }
@@ -145,7 +143,7 @@ public class manageItem implements Serializable {
         return "itemList";
     }
 
-     public String updateItem(String s) throws SQLException {
+    public String updateItem(String s) throws SQLException {
 
         if (ds == null) {
             throw new SQLException("ds is null; Can't get data source");
@@ -177,7 +175,6 @@ public class manageItem implements Serializable {
         return "itemList";
     }
 
-   
     public String deleteItem(Item s) throws SQLException {
 
         if (ds == null) {
@@ -203,11 +200,28 @@ public class manageItem implements Serializable {
         } finally {
             conn.close();
         }
-        return null;
+        return "editItem" ;
     }
 
+    public String removeFile(long s) throws SQLException {
 
-    public void uploadFile() throws IOException, SQLException {
+        Connection conn = ds.getConnection();
+
+        try {
+            PreparedStatement deleteQuery = conn.prepareStatement(
+                    "delete from FILESTORAGE where FILE_ID = ?"
+            );
+
+              deleteQuery.setString(1, String.valueOf(s));
+            deleteQuery.executeUpdate();
+
+        } finally {
+            conn.close();
+        }
+        return "itemList";
+    }
+
+    public void uploadFile(long s) throws IOException, SQLException {
 
         FacesContext facesContext = FacesContext.getCurrentInstance();
 
@@ -215,27 +229,49 @@ public class manageItem implements Serializable {
 
         InputStream inputStream;
         inputStream = null;
-        try {
-            inputStream = file.getInputstream();
-            PreparedStatement insertQuery = conn.prepareStatement(
-                    "INSERT INTO FILESTORAGE (FILE_NAME, FILE_TYPE, FILE_SIZE, FILE_CONTENTS) "
-                    + "VALUES (?, ?, ?, ?)");
-            insertQuery.setString(1, file.getFileName());
-            insertQuery.setString(2, file.getContentType());
-            insertQuery.setLong(3, file.getSize());
-            insertQuery.setBinaryStream(4, inputStream);
 
-            int result = insertQuery.executeUpdate();
-            if (result == 1) {
-                facesContext.addMessage("uploadForm:upload",
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,
-                                file.getFileName()
-                                + ": uploaded successfuly !!", null));
-            } else {
-                // if not 1, it must be an error.
-                facesContext.addMessage("uploadForm:upload",
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                result + " file uploaded", null));
+        int count = 0;
+        try {
+
+            PreparedStatement countQuery = conn.prepareStatement(
+                    "Select FILE_ID From FILESTORAGE Where ITEM_ID = ?"
+            );
+            countQuery.setLong(1, s);
+            ResultSet outcome = countQuery.executeQuery();
+
+            while (outcome.next()) {
+                count++;
+            }
+
+            if (count < 5) {
+                inputStream = file.getInputstream();
+                PreparedStatement insertQuery = conn.prepareStatement(
+                        "INSERT INTO FILESTORAGE (ITEM_ID, FILE_NAME, FILE_TYPE, FILE_SIZE, FILE_CONTENTS) "
+                        + "VALUES (?, ?, ?, ?, ?)");
+
+                insertQuery.setLong(1, s);
+                insertQuery.setString(2, file.getFileName());
+                insertQuery.setString(3, file.getContentType());
+                insertQuery.setLong(4, file.getSize());
+                insertQuery.setBinaryStream(5, inputStream);
+
+                int result = insertQuery.executeUpdate();
+                if (result == 1) {
+                    facesContext.addMessage("uploadForm:upload",
+                            new FacesMessage(FacesMessage.SEVERITY_INFO,
+                                    file.getFileName()
+                                    + ": uploaded successfuly !!", null));
+                } else {
+                    // if not 1, it must be an error.
+                    facesContext.addMessage("uploadForm:upload",
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                    result + " file uploaded", null));
+                }
+            }
+            else {
+                   facesContext.addMessage("uploadForm:upload",
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                    "You can't uploade more than 5 pictures", null));
             }
         } catch (IOException e) {
             facesContext.addMessage("uploadForm:upload",
@@ -250,7 +286,7 @@ public class manageItem implements Serializable {
             }
         }
     }
-
+    
     public void validateFile(FacesContext ctx, UIComponent comp, Object value) {
         if (value == null) {
             throw new ValidatorException(
@@ -271,18 +307,15 @@ public class manageItem implements Serializable {
         }
     }
     
-    public ResultSet getList() throws SQLException {
-        Connection conn = ds.getConnection();
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet result = stmt.executeQuery(
-                    "SELECT FILE_ID, FILE_NAME, FILE_TYPE, FILE_SIZE FROM FILESTORAGE"
-            );
-            CachedRowSet crs = new CachedRowSetImpl();
-            crs.populate(result);
-            return crs;
-        } finally {
-            conn.close();
+    /*
+    public void processValidations() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        UIInput fileUploadComponent = fileUploadsBean.getFileUploadComponent();
+        if (fileUploadComponent!=null && !isFileUploaded()) {
+            fileUploadComponent.setValid(false);
+            context.addMessage(fileUploadComponent.getClientId(context), new FacesMessage(FacesMessage.SEVERITY_ERROR, messageSummary, messageDetail));
+            context.validationFailed();
         }
     }
+    */
 }

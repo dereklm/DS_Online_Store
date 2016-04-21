@@ -4,7 +4,8 @@
       xmlns:b="http://bootsfaces.net/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
         <title>Amazon</title>
     </h:head>
@@ -12,7 +13,6 @@
         .myHeader{
             text-align: center;
             margin-top: 25px;
-
         }
     </style>
     <h:body> 
@@ -53,10 +53,13 @@
         <br /><br />
         <div class="container">
             <h:form>
-                <p:dataTable value="#{itemBean.list}" var="item">
+                <p:dataTable value="#{itemBean.itemList}" var="item">
                     <f:facet name="header" >
                         Item List
                     </f:facet>
+                    <p:column headerText="Title">
+                        <h:outputText value="#{item.title}" />
+                    </p:column>
                     <p:column headerText="Brand">
                         <h:outputText value="#{item.brand}"/>
                     </p:column>
@@ -77,12 +80,10 @@
                     </p:column>
                     <p:column headerText="Action">
                         <h:commandButton value="Edit" action="#{itemBean.goToEdit(item)}" />
-                        <h:commandButton value="Delete" action="#{itemBean.deleteItem(item)}"/>
+                        <p:commandButton value="Delete" action="#{itemBean.deleteItem(item)}"/>
                     </p:column>
-                </p:dataTable> 
+                </p:dataTable>
             </h:form>
-
         </div>
     </h:body>
 </html>
-

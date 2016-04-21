@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:b="http://bootsfaces.net/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
     <h:head>
         <title>Amazon</title>
     </h:head>
@@ -44,16 +45,59 @@
         </b:navBar>
         <div class="container">
             <h:form class="alignCenter">
-                <b:row > 
-                    <b:column col-xs="9" col-sm="10"> <b:inputText placeholder="Type something here..." /></b:column>
-                    <b:column col-xs="3" col-sm="2" span="2"> <b:commandButton value="Search" size="125px"/> </b:column>
-                </b:row>
+                <b:row> 
+                    <b:column col-xs="3" col-sm="2"> 
+                        <p:autoComplete
+                            id="autocomplete"
+                            value="#{searchBean.searchTxt}"
+                            completeMethod="#{searchBean.autoComplete}"
+                            placeholder="Search for Items" />
+                    </b:column>
+                    <b:column col-xs="3" col-sm="2" span="2"> 
+                        <b:commandButton update=":resultsForm"
+                                         action="#{searchBean.search()}"
+                                         value="Search" size="125px" >                            
+                        </b:commandButton>
+                    </b:column>
+                </b:row> <br/>
             </h:form>
         </div>
-        <h:form>
-            <h:commandLink value="Logout" action="#{register.logout()}" 
-                         rendered="#{register.checkLoginStatus()}"/>
-        </h:form>
+        <div class="container">
+            <h:form id="resultsForm">
+                <p:dataTable value="#{searchBean.searchResults}" var="item">
+                    <f:facet name="header" >
+                        Item List
+                    </f:facet>
+                    <p:column headerText="Title">
+                        <h:commandLink value="#{item.title}" 
+                                       action="#{searchBean.itemDetails(item)}" />
+                    </p:column>
+                    <p:column headerText="Brand">
+                        <h:outputText value="#{item.brand}"/>
+                    </p:column>
+                    <p:column headerText="Model">
+                        <h:outputText value="#{item.model}"/>
+                    </p:column>
+                    <p:column headerText="Description">
+                        <h:outputText value="#{item.description}"/>
+                    </p:column>
+                    <p:column headerText="Stock">
+                        <h:outputText value="#{item.stock}"/>
+                    </p:column>
+                    <p:column headerText="Price ($)">
+                        <h:outputText value="#{item.price}">
+                            <f:convertNumber currencyCode="USD" groupingUsed="true"
+                                             maxFractionDigits="2" type="currency" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Action">
+                        <h:commandButton value="Edit" action="#{itemBean.goToEdit(item)}" />
+                        <h:commandButton value="Delete" action="#{itemBean.deleteItem(item)}"/>
+                    </p:column>
+                </p:dataTable> 
+            </h:form>
+
+        </div>
     </h:body>
 </html>
 

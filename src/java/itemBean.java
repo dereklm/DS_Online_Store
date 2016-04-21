@@ -1,4 +1,5 @@
 
+import com.sun.rowset.CachedRowSetImpl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -6,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
@@ -14,6 +16,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.sql.DataSource;
+import javax.sql.rowset.CachedRowSet;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
 @SessionScoped
@@ -29,10 +34,22 @@ public class itemBean implements Serializable {
     private String description;
     private double price;
     private long ITEM_ID;
-    private List<Item> list = new ArrayList<>();
+    private List<Item> itemList = new ArrayList<>();
     private Item item;
-
+    private List<String> images;
     private UploadedFile file;
+
+    public UploadedFile getFile() {
+        return file;
+    }
+
+    public void setFile(UploadedFile file) {
+        this.file = file;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
 
     public Item getItem() {
         return item;
@@ -49,7 +66,7 @@ public class itemBean implements Serializable {
     public void setITEM_ID(long ITEM_ID) {
         this.ITEM_ID = ITEM_ID;
     }
-    
+
     public String getModel() {
         return model;
     }
@@ -90,16 +107,16 @@ public class itemBean implements Serializable {
         this.price = price;
     }
 
-    public List<Item> getList() {
-        return list;
+    public List<Item> getitemList() {
+        return itemList;
     }
 
-    public void setList(List list) {
-        this.list = list;
+    public void setitemList(List itemList) {
+        this.itemList = itemList;
     }
 
     public void getItems() throws SQLException {
-        list.clear();
+        itemList.clear();
 
         if (ds == null) {
             throw new SQLException("ds is null; Can't get data source");
@@ -123,12 +140,12 @@ public class itemBean implements Serializable {
                 c.setTitle(result.getString("title"));
                 c.setDescription(result.getString("description"));
                 c.setPrice(Double.valueOf(result.getString("price")));
-                list.add(c);
+                itemList.add(c);
             }
         } finally {
             conn.close();
         }
-        setList(list);
+        setitemList(itemList);
     }
 
     public String deleteItem(Item s) throws SQLException {
@@ -159,50 +176,6 @@ public class itemBean implements Serializable {
         return null;
     }
 
-    public void uploadFile() throws IOException, SQLException {
-
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-
-        Connection conn = ds.getConnection();
-
-        InputStream inputStream;
-        inputStream = null;
-        try {
-            inputStream = file.getInputstream();
-            PreparedStatement insertQuery = conn.prepareStatement(
-                    "INSERT INTO FILESTORAGE (FILE_NAME, FILE_TYPE, FILE_SIZE, FILE_CONTENTS) "
-                    + "VALUES (?, ?, ?, ?)");
-            insertQuery.setString(1, file.getFileName());
-            insertQuery.setString(2, file.getContentType());
-            insertQuery.setLong(3, file.getSize());
-            insertQuery.setBinaryStream(4, inputStream);
-
-            int result = insertQuery.executeUpdate();
-            if (result == 1) {
-                facesContext.addMessage("uploadForm:upload",
-                        new FacesMessage(FacesMessage.SEVERITY_INFO,
-                                file.getFileName()
-                                + ": uploaded successfuly !!", null));
-            } else {
-                // if not 1, it must be an error.
-                facesContext.addMessage("uploadForm:upload",
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                result + " file uploaded", null));
-            }
-        } catch (IOException e) {
-            facesContext.addMessage("uploadForm:upload",
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "File upload failed !!", null));
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            if (conn != null) {
-                conn.close();
-            }
-        }
-    }
-    
     public String updateItem(String s) throws SQLException {
 
         if (ds == null) {
@@ -238,5 +211,40 @@ public class itemBean implements Serializable {
     public String goToEdit(Item s) {
         setItem(s);
         return "editItem";
+    }
+
+    public ResultSet getList() throws SQLException {
+        Connection conn = ds.getConnection();
+        try {
+            PreparedStatement is = conn.prepareStatement(
+                    "SELECT ITEM_ID, FILE_ID, FILE_NAME, FILE_TYPE, FILE_SIZE, FILE_CONTENTS FROM FILESTORAGE WHERE ITEM_ID = ?"
+            );
+            CachedRowSet crs = new CachedRowSetImpl();
+
+            is.setLong(1, item.getITEM_ID());
+
+            ResultSet result = is.executeQuery();
+            crs.populate(result);
+            return crs;
+        } finally {
+            conn.close();
+        }
+    }
+
+    public ResultSet getPic() throws SQLException {
+        Connection conn = ds.getConnection();
+        try {
+            PreparedStatement is = conn.prepareStatement(
+                    "SELECT ITEM_ID, FILE_ID, FILE_NAME, FILE_TYPE, FILE_SIZE, FILE_CONTENTS FROM FILESTORAGE"
+            );
+
+            CachedRowSet cache = new CachedRowSetImpl();
+
+            ResultSet result = is.executeQuery();
+            cache.populate(result);
+            return cache;
+        } finally {
+            conn.close();
+        }
     }
 }

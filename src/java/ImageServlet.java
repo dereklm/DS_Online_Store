@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-@WebServlet(name = "ImageServlet", urlPatterns = {"/admin/ImageServlet"})
+@WebServlet(name = "ImageServlet", urlPatterns = {"/admin/ImageServlet", "/ImageServlet"})
 public class ImageServlet extends HttpServlet {
 
 	@Resource(name = "jdbc/db1")
